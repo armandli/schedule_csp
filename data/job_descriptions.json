@@ -1,0 +1,63 @@
+{
+  "BondTradeSource1" : {
+    "Frequency" : "1-5,7",
+    "ExpectedTime" : 60,
+    "TimeRestriction" : "06:00-",
+    "Resource" : "TTTPipe"
+  },
+  "BondTradeSource2" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 30,
+    "TimeRestriction" : "17:00-"
+  },
+  "BondPriceSource1" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 60,
+    "Resource" : "TTTPipe"
+  },
+  "BondReference1" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 15,
+    "TimeRestriction" : "17:00-"
+  },
+  "BondLiquidityDailyCalibration" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 90,
+    "Dependency" : "BondTradeSource1,BondTradeSource2,BondPriceSource1,BondReference1,BondLiquidityWeeklyCalibration(7)",
+    "Resource" : "Spark"
+  },
+  "BondLiquidityWeeklyCalibration" : {
+    "Frequency" : "7",
+    "ExpectedTime" : 180,
+    "Dependency" : "BondTradeSource1(7),BondLiquidityDailyCalibration(5)",
+    "Resource" : "Spark"
+  },
+  "BondLiquidityPromotion" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 60,
+    "Dependency" : "BondLiquidityDailyCalibration"
+  },
+  "BondLiquidityValidation" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 20,
+    "Dependency" : "BondLiquidityPromotion",
+    "Resource" : "DataPipe"
+  },
+  "BondPredictionProductCalibration" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 90,
+    "Resource" : "Spark",
+    "Dependency" : "BondPriceSource1,BondReference1"
+  },
+  "BondPredictionProductPromotion" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 20,
+    "Dependency" : "BondPredictionProductCalibration"
+  },
+  "BondPredictionProductValidation" : {
+    "Frequency" : "1-5",
+    "ExpectedTime" : 20,
+    "Dependency" : "BondPredictionProductPromotion",
+    "Resource" : "DataPipe"
+  }
+}
